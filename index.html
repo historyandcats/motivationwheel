@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Колесо мотивации проекта «История и котики»: крути колесо и получай заряд уверенности от героев истории.">
+<title>Колесо мотивации</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700&family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1f3c8f; --navy-d:#162c6b; --orange:#f0861f; --purple:#7a4fc4;
+  --ink:#1b2340; --muted:#6b7390; --bg:#f7f4ef; --card:#ffffff; --cream:#fbf1e4; --line:#e8e1d6;
+  --hfont:"Unbounded","Golos Text",system-ui,sans-serif; --bfont:"Golos Text",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:var(--bfont);-webkit-font-smoothing:antialiased}
+body{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 16px 40px}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.brand{display:inline-flex;align-items:center;gap:8px;font:600 13px var(--bfont);color:var(--navy);background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 14px 6px 8px;text-decoration:none}
+.brand svg{width:22px;height:20px}
+header{text-align:center;max-width:560px}
+h1{font:700 clamp(26px,5vw,38px)/1.15 var(--hfont);color:var(--navy);margin:18px 0 10px;letter-spacing:-.01em}
+.lead{color:var(--muted);font-size:16px;line-height:1.5}
+.stage{position:relative;width:min(440px,88vw);aspect-ratio:1;margin:30px auto 8px}
+.wheel-wrap{position:absolute;inset:0;border-radius:50%;background:#fff;box-shadow:0 18px 50px -20px rgba(31,60,143,.35),0 0 0 10px #fff,0 0 0 11px var(--line)}
+#wheel{width:100%;height:100%;display:block;transition:transform 5.2s cubic-bezier(.12,.72,.08,1);will-change:transform}
+.pointer{position:absolute;left:50%;top:-14px;transform:translateX(-50%);width:34px;height:42px;z-index:3;filter:drop-shadow(0 4px 6px rgba(27,35,64,.25))}
+.pointer.tick{animation:tick .14s ease}
+@keyframes tick{50%{transform:translateX(-50%) rotate(-9deg)}}
+.hub{position:absolute;left:50%;top:50%;width:26%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:var(--orange);color:#fff;z-index:2;display:flex;align-items:center;justify-content:center;flex-direction:column;font:700 clamp(13px,3.2vw,17px) var(--hfont);box-shadow:0 0 0 6px #fff,0 8px 20px -6px rgba(240,134,31,.6);transition:transform .2s ease,background .2s}
+.hub:hover{transform:translate(-50%,-50%) scale(1.04)}
+.hub:active{transform:translate(-50%,-50%) scale(.97)}
+.hub:disabled{background:#f4b06c;cursor:default;transform:translate(-50%,-50%)}
+.hub small{font:500 11px var(--bfont);opacity:.85;margin-top:2px}
+.hub:focus-visible{outline:3px solid var(--navy);outline-offset:6px}
+.counter{color:var(--muted);font-size:13px;text-align:center;margin-top:18px}
+.result{width:min(560px,100%);margin-top:48px;position:relative}
+.result:has(.hint){margin-top:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:42px 30px 26px;text-align:center;box-shadow:0 20px 50px -30px rgba(27,35,64,.35);position:relative}
+.card .peek{position:absolute;left:50%;top:-26px;width:52px;height:52px;transform:translateX(-50%);background:#fff;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.card .peek svg{width:32px;height:30px}
+.cat-chip{display:inline-block;font:600 12px var(--bfont);letter-spacing:.06em;text-transform:uppercase;color:var(--purple);background:#f1ebfb;border-radius:999px;padding:5px 12px}
+.phrase{font:600 clamp(19px,3.6vw,24px)/1.4 var(--hfont);color:var(--navy);margin:16px 0 0;text-wrap:balance}
+.who{margin-top:14px;color:var(--muted);font-size:14px}
+.who b{color:var(--orange);font-weight:600}
+.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+.btn{border-radius:14px;padding:12px 20px;font:600 15px var(--bfont);transition:transform .15s,background .15s}
+.btn:active{transform:scale(.97)}
+.btn-n{background:var(--navy);color:#fff}
+.btn-n:hover{background:var(--navy-d)}
+.btn-g{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.btn-g:hover{border-color:#cfc6b8}
+.result.show .card{animation:rise .5s cubic-bezier(.2,.8,.2,1)}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.hint{color:var(--muted);text-align:center;font-size:15px;padding:8px}
+footer{margin-top:auto;padding-top:40px;font-size:13px;color:var(--muted);text-align:center}
+footer a{color:var(--navy);font-weight:600;text-decoration:none;border-bottom:1px solid #c9d2ee}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;font-size:14px;padding:10px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:.25s}
+.toast.on{opacity:1;transform:translateX(-50%)}
+@media (prefers-reduced-motion:reduce){#wheel{transition-duration:.01s}.result.show .card{animation:none}}
+@media (max-width:480px){.card{padding:30px 20px 22px}}
+</style>
+</head>
+<body>
+<header>
+  <a class="brand sub-link" href="https://t.me/historyandcats" target="_blank" rel="noopener"><svg viewBox="0 0 48 44" aria-hidden="true"><path d="M8 20 L7 4 L19 12 Q24 11 29 12 L41 4 L40 20 Q42 24 42 27 C42 37 34 42 24 42 C14 42 6 37 6 27 Q6 24 8 20 Z" fill="#f0861f"/><path d="M10.5 9.5 L17 13.5 L11 17 Z M37.5 9.5 L31 13.5 L37 17 Z" fill="#fbd3ad"/><circle cx="17.5" cy="26" r="2.6" fill="#1b2340"/><circle cx="30.5" cy="26" r="2.6" fill="#1b2340"/><path d="M22.4 31 h3.2 l-1.6 1.8 Z" fill="#1b2340"/><path d="M24 32.8 q-1.6 2.2 -3.6 1.4 M24 32.8 q1.6 2.2 3.6 1.4" stroke="#1b2340" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>История и котики</a>
+  <h1>Колесо мотивации</h1>
+  <p class="lead">Крути колесо — и герои истории поделятся с тобой уверенностью.</p>
+</header>
+
+<div class="stage">
+  <svg class="pointer" id="pointer" viewBox="0 0 34 42" aria-hidden="true"><path d="M17 40 L3 12 A15 15 0 1 1 31 12 Z" fill="#1f3c8f"/><circle cx="17" cy="14" r="5" fill="#fff"/></svg>
+  <div class="wheel-wrap"><svg id="wheel" viewBox="-200 -200 400 400" role="img" aria-label="Колесо мотивации"></svg></div>
+  <button class="hub" id="spin" aria-label="Крутить колесо">Крути<small>колесо</small></button>
+</div>
+<div class="counter" id="counter"></div>
+
+<section class="result" id="result" aria-live="polite">
+  <p class="hint">Нажми на центр колеса 🐾</p>
+</section>
+
+<footer>Больше игр и разборов к ЕГЭ и ОГЭ — в канале <a class="sub-link" href="https://t.me/historyandcats" target="_blank" rel="noopener">«История и котики»</a></footer>
+<div class="toast" id="toast">Скопировано</div>
+
+<script>
+(() => {
+"use strict";
+const PEEK = `<svg viewBox="0 0 48 44" aria-hidden="true"><path d="M8 20 L7 4 L19 12 Q24 11 29 12 L41 4 L40 20 Q42 24 42 27 C42 37 34 42 24 42 C14 42 6 37 6 27 Q6 24 8 20 Z" fill="#f0861f"/><path d="M10.5 9.5 L17 13.5 L11 17 Z M37.5 9.5 L31 13.5 L37 17 Z" fill="#fbd3ad"/><circle cx="17.5" cy="26" r="2.6" fill="#1b2340"/><circle cx="30.5" cy="26" r="2.6" fill="#1b2340"/><path d="M22.4 31 h3.2 l-1.6 1.8 Z" fill="#1b2340"/><path d="M24 32.8 q-1.6 2.2 -3.6 1.4 M24 32.8 q1.6 2.2 3.6 1.4" stroke="#1b2340" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>`;
+
+/* Сектора колеса и фразы. who — герой истории (если есть) */
+const CATS = [
+  {name:"Смелость", items:[
+    {t:"Смелость — твоя суперсила. Сделай сегодня то, на что вчера не решался!"},
+    {t:"Ты сильнее, чем думаешь, — и скоро сам в этом убедишься!"},
+    {t:"Гагарин первым в мире полетел в космос — а ты первым решишь самую сложную задачу!", who:"Юрий Гагарин"},
+    {t:"Котляревский с 1,5 тысячи солдат обратил в бегство 10-тысячный корпус — а ты справишься с любой контрольной!", who:"Пётр Котляревский"}
+  ]},
+  {name:"Упорство", items:[
+    {t:"Ошибся? Отлично — значит, ты в пути!"},
+    {t:"Каждая попытка приближает тебя к цели!"},
+    {t:"Пётр I проиграл под Нарвой, а через девять лет победил под Полтавой. А ты отыграешься ещё быстрее!", who:"Пётр I"},
+    {t:"Ломоносов ушёл из Холмогор в Москву, чтобы учиться, и стал великим учёным — а твой путь к знаниям гораздо короче, так что вперёд!", who:"Михаил Ломоносов"}
+  ]},
+  {name:"Знания", items:[
+    {t:"Знания — это сила, которая всегда с тобой!"},
+    {t:"Каждая прочитанная страница делает тебя сильнее!"},
+    {t:"Менделеев навёл порядок во всех химических элементах — а ты наведёшь порядок во всех датах!", who:"Дмитрий Менделеев"},
+    {t:"Карамзин больше двадцати лет писал «Историю государства Российского» — а тебе, чтобы её выучить, хватит пары месяцев!", who:"Николай Карамзин"}
+  ]},
+  {name:"Победа", items:[
+    {t:"Ты супер! И впереди много побед!"},
+    {t:"Впереди много побед — и первая уже совсем близко!"},
+    {t:"Суворов не проиграл ни одного сражения, а ты ещё лучше!", who:"Александр Суворов"},
+    {t:"Ушаков не проиграл ни одного морского сражения — а ты не проиграешь ни одного экзамена!", who:"Фёдор Ушаков"}
+  ]},
+  {name:"Мечта", items:[
+    {t:"Мечтай смело — мечты сбываются!"},
+    {t:"Представь себя на финише — ты уже почти там!"},
+    {t:"Королёв строил ракеты, о которых другие только мечтали, — а твои мечты тоже обязательно взлетят!", who:"Сергей Королёв"},
+    {t:"Афанасий Никитин дошёл до самой Индии — а ты дойдёшь до своей мечты!", who:"Афанасий Никитин"}
+  ]}
+];
+/* На колесе 10 секторов: каждая тема встречается дважды */
+const SECTORS = Array.from({length:10},(_,i)=>({cat:i%5, name:CATS[i%5].name}));
+const TOTAL = CATS.reduce((n,c)=>n+c.items.length,0);
+const N = SECTORS.length, SEG = 360/N, R = 190;
+const FILL = ["#1f3c8f","#fbf1e4"], TEXT = ["#ffffff","#1f3c8f"];
+
+const $ = id=>document.getElementById(id);
+const esc = s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- рисуем колесо ---------- */
+function polar(a,r){ const t=(a-90)*Math.PI/180; return [r*Math.cos(t), r*Math.sin(t)]; }
+let svg="";
+SECTORS.forEach((s,i)=>{
+  const a0=i*SEG, a1=a0+SEG, [x0,y0]=polar(a0,R), [x1,y1]=polar(a1,R);
+  svg+=`<path d="M0 0 L${x0.toFixed(2)} ${y0.toFixed(2)} A${R} ${R} 0 0 1 ${x1.toFixed(2)} ${y1.toFixed(2)} Z" fill="${FILL[i%2]}"/>`;
+  const mid=a0+SEG/2;
+  svg+=`<g transform="rotate(${mid})"><text x="0" y="-122" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90 0 -122)" font-family="Golos Text, system-ui, sans-serif" font-weight="700" font-size="16" fill="${TEXT[i%2]}" letter-spacing=".02em">${s.name}</text></g>`;
+});
+for(let i=0;i<N;i++){ const [x,y]=polar(i*SEG,R); svg+=`<line x1="0" y1="0" x2="${x.toFixed(2)}" y2="${y.toFixed(2)}" stroke="#ffffff" stroke-width="2" opacity=".55"/>`; }
+for(let i=0;i<N;i++){ const [x,y]=polar(i*SEG+SEG/2,R-12); svg+=`<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="3.2" fill="#f0861f" opacity=".9"/>`; }
+svg+=`<circle r="${R}" fill="none" stroke="#1f3c8f" stroke-width="3"/>`;
+$("wheel").innerHTML=svg;
+
+/* ---------- состояние ---------- */
+const KEY="koleso-motivacii-v2";
+let seen=new Set();
+try{ seen=new Set(JSON.parse(localStorage.getItem(KEY))||[]); }catch(e){}
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify([...seen])); }catch(e){} }
+function renderCounter(){ $("counter").textContent = seen.size ? `Открыто фраз: ${seen.size} из ${TOTAL}` : `В колесе ${TOTAL} фраз — собери все`; }
+renderCounter();
+
+let angle=0, spinning=false, lastIdx=-1;
+function pick(){
+  // сектор: случайный, но не тот же, что в прошлый раз
+  let si; do{ si=Math.floor(Math.random()*N); }while(si===lastIdx && N>1);
+  lastIdx=si;
+  const ci=SECTORS[si].cat;
+  const pool=CATS[ci].items.map((it,j)=>({it,id:ci+"-"+j}));
+  const fresh=pool.filter(x=>!seen.has(x.id));
+  const src=fresh.length?fresh:pool;
+  return {si, ...src[Math.floor(Math.random()*src.length)]};
+}
+
+function spin(){
+  if(spinning) return;
+  spinning=true; $("spin").disabled=true;
+  const res=pick();
+  const jitter=(Math.random()-.5)*SEG*0.6;
+  const target=360 - (res.si*SEG + SEG/2) + jitter;          // сектор под стрелкой
+  const cur=((angle%360)+360)%360;
+  let delta=((target-cur)%360+360)%360;
+  angle += 360*5 + delta;
+  $("wheel").style.transform=`rotate(${angle}deg)`;
+  // лёгкое «тиканье» стрелки
+  const ticks=[];
+  if(!matchMedia("(prefers-reduced-motion: reduce)").matches){
+    for(let k=0;k<14;k++){ ticks.push(setTimeout(()=>{ const p=$("pointer"); p.classList.remove("tick"); void p.getBBox(); p.classList.add("tick"); }, 4900*(1-Math.pow(1-k/14,2.2)))); }
+  }
+  const done=()=>{ ticks.forEach(clearTimeout); spinning=false; $("spin").disabled=false; show(res); };
+  const dur=matchMedia("(prefers-reduced-motion: reduce)").matches?50:5250;
+  setTimeout(done,dur);
+}
+
+function show(res){
+  seen.add(res.id); save(); renderCounter();
+  const s=CATS[SECTORS[res.si].cat], it=res.it;
+  const box=$("result");
+  box.classList.remove("show"); void box.offsetWidth;
+  box.innerHTML=`<div class="card">
+      <div class="peek" aria-hidden="true">${PEEK}</div>
+      <span class="cat-chip">${esc(s.name)}</span>
+      <p class="phrase">${esc(it.t)}</p>
+      ${it.who?`<p class="who">Герой истории: <b>${esc(it.who)}</b></p>`:""}
+      <div class="actions">
+        <button class="btn btn-n" id="again">Крутить ещё</button>
+        <button class="btn btn-g" id="copy">Скопировать</button>
+      </div>
+    </div>`;
+  box.classList.add("show");
+  $("again").onclick=()=>{ window.scrollTo({top:0,behavior:"smooth"}); setTimeout(spin,250); };
+  $("copy").onclick=()=>copy(it.t);
+  if(window.innerWidth<700) box.scrollIntoView({behavior:"smooth",block:"center"});
+}
+
+function copy(text){
+  const msg=text+" — «История и котики» 🐾";
+  const ok=()=>{ const t=$("toast"); t.classList.add("on"); setTimeout(()=>t.classList.remove("on"),1600); };
+  if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(msg).then(ok).catch(()=>{}); }
+  else { const ta=document.createElement("textarea"); ta.value=msg; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy");ok();}catch(e){} ta.remove(); }
+}
+
+$("spin").addEventListener("click",spin);
+})();
+</script>
+</body>
+</html>
